@@ -266,7 +266,7 @@ function App() {
   const contentFiles = import.meta.glob('./content/**/*.md', { query: '?raw', import: 'default', eager: true });
 
   return (
-    <Router basename="/marv-wiki">
+    <Router basename="/Marvwiki">
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/:lang/*" element={<AppLayout allPages={contentFiles} />} />
