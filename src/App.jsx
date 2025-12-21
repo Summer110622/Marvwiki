@@ -10,7 +10,8 @@ import { HashRouter as Router, Routes, Route, Link, useParams, Navigate } from '
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import matter from 'gray-matter';
-import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon } from 'lucide-react';
+import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon, Flower, Sun, Leaf, Snowflake } from 'lucide-react';
+import SeasonalEffects from './components/SeasonalEffects';
 
 // Wikipedia Infobox Component
 const Infobox = ({ data }) => {
@@ -44,7 +45,14 @@ const Infobox = ({ data }) => {
 };
 
 // Sidebar Component
-const Sidebar = ({ pages, currentLang }) => {
+const Sidebar = ({ pages, currentLang, season, setSeason }) => {
+  const seasons = [
+    { id: 'spring', icon: Flower, label_ja: '春', label_en: 'Spring' },
+    { id: 'summer', icon: Sun, label_ja: '夏', label_en: 'Summer' },
+    { id: 'autumn', icon: Leaf, label_ja: '秋', label_en: 'Autumn' },
+    { id: 'winter', icon: Snowflake, label_ja: '冬', label_en: 'Winter' },
+  ];
+
   return (
     <nav className="sidebar">
       <div className="wiki-logo">
@@ -114,6 +122,23 @@ const Sidebar = ({ pages, currentLang }) => {
           <li><a href="https://discord.gg/NfYyMnTfj3" target="_blank" rel="noopener noreferrer"><MessageCircle size={14} style={{ marginRight: '5px' }} /> Discord</a></li>
           <li><a href="https://github.com" target="_blank" rel="noopener noreferrer"><Github size={14} style={{ marginRight: '5px' }} /> GitHub Source</a></li>
         </ul>
+      </div>
+
+      <div className="nav-section">
+        <h3>{currentLang === 'ja' ? '季節のエフェクト' : 'Seasonal Effects'}</h3>
+        <div className="season-selector">
+          {seasons.map(s => (
+            <button
+              key={s.id}
+              className={`season-btn ${s.id} ${season === s.id ? 'active' : ''}`}
+              onClick={() => setSeason(season === s.id ? null : s.id)}
+              title={currentLang === 'ja' ? s.label_ja : s.label_en}
+            >
+              <s.icon size={20} />
+              <span>{currentLang === 'ja' ? s.label_ja : s.label_en}</span>
+            </button>
+          ))}
+        </div>
       </div>
     </nav>
   );
@@ -280,6 +305,7 @@ function App() {
 
 const AppLayout = ({ allPages }) => {
   const { lang = 'ja' } = useParams();
+  const [season, setSeason] = useState(null);
 
   const pages = useMemo(() => {
     return Object.keys(allPages).filter(key => key.includes(`/${lang}/`)).map(path => {
@@ -291,7 +317,8 @@ const AppLayout = ({ allPages }) => {
 
   return (
     <div className="app-container">
-      <Sidebar pages={pages} currentLang={lang} />
+      <SeasonalEffects season={season} />
+      <Sidebar pages={pages} currentLang={lang} season={season} setSeason={setSeason} />
       <Routes>
         <Route path="category/:catName" element={<CategoryPage allPages={allPages} />} />
         <Route path=":id" element={<WikiPage allPages={allPages} />} />
