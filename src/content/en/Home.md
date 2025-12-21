@@ -34,4 +34,4 @@ MARV is a Minecraft multiplayer server with a 1:500 scale reproduction of the Ea
 </div>
 
 ## Plugins
-[Check the Plugins and Commands page here](/en/Plugin)
+[Check the Plugins and Commands page here](#/en/Plugin)

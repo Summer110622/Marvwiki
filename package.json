@@ -1,5 +1,5 @@
 {
-  "name": "Marvwiki",
+  "name": "marvwiki",
   "private": true,
   "version": "0.0.0",
   "homepage": "https://Earth-Router.github.io/Marvwiki",
@@ -10,7 +10,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "predeploy": "npm run build && cp dist/index.html dist/404.html",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d dist --dotfiles"
   },
   "dependencies": {

@@ -1,13 +1,16 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
-import { marked } from 'marked';
-import DOMPurify from 'dompurify';
-import matter from 'gray-matter';
-import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon } from 'lucide-react';
 import { Buffer } from 'buffer';
 
 // Polyfill Buffer for gray-matter
 window.Buffer = Buffer;
+window.global = window;
+window.process = { env: {} };
+
+import React, { useState, useEffect, useMemo } from 'react';
+import { HashRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
+import { marked } from 'marked';
+import DOMPurify from 'dompurify';
+import matter from 'gray-matter';
+import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon } from 'lucide-react';
 
 // Wikipedia Infobox Component
 const Infobox = ({ data }) => {
@@ -266,7 +269,7 @@ function App() {
   const contentFiles = import.meta.glob('./content/**/*.md', { query: '?raw', import: 'default', eager: true });
 
   return (
-    <Router basename="/Marvwiki">
+    <Router>
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/:lang/*" element={<AppLayout allPages={contentFiles} />} />
