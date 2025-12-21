@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useParams, useLocation, Navigate } from 'react-router-dom';
+import React, { useState, useEffect, useMemo } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import matter from 'gray-matter';
@@ -41,7 +41,7 @@ const Infobox = ({ data }) => {
 };
 
 // Sidebar Component
-const Sidebar = ({ pages, currentLang, onLangChange }) => {
+const Sidebar = ({ pages, currentLang }) => {
   return (
     <nav className="sidebar">
       <div className="wiki-logo">
@@ -182,7 +182,7 @@ const WikiPage = ({ allPages }) => {
     };
 
     loadPage();
-  }, [id, allPages]);
+  }, [id, allPages, lang]);
 
   if (loading) return <div className="main-content">Loading...</div>;
 
@@ -221,10 +221,9 @@ const WikiPage = ({ allPages }) => {
 // Category Page Component
 const CategoryPage = ({ allPages }) => {
   const { lang = 'ja', catName } = useParams();
-  const [pages, setPages] = useState([]);
 
-  useEffect(() => {
-    const list = Object.keys(allPages).filter(key => key.includes(`/${lang}/`)).filter(key => {
+  const pages = useMemo(() => {
+    return Object.keys(allPages).filter(key => key.includes(`/${lang}/`)).filter(key => {
       const { data } = matter(allPages[key]);
       return data.categories && data.categories.includes(catName);
     }).map(key => {
@@ -232,7 +231,6 @@ const CategoryPage = ({ allPages }) => {
       const { data } = matter(allPages[key]);
       return { id, title: data.title || id };
     });
-    setPages(list);
   }, [catName, allPages, lang]);
 
   return (
@@ -257,20 +255,18 @@ const CategoryPage = ({ allPages }) => {
   );
 };
 
-function App() {
-  const [pages, setPages] = useState([]);
+// Component to handle redirection from root
+const RootRedirect = () => {
+  const userLang = navigator.language.startsWith('ja') ? 'ja' : 'en';
+  return <Navigate to={`/${userLang}/Home`} replace />;
+};
 
+function App() {
   // Use Vite's glob import to get all md files as RAW text recursively
   const contentFiles = import.meta.glob('./content/**/*.md', { query: '?raw', import: 'default', eager: true });
 
-  // Component to handle redirection from root
-  const RootRedirect = () => {
-    const userLang = navigator.language.startsWith('ja') ? 'ja' : 'en';
-    return <Navigate to={`/${userLang}/Home`} replace />;
-  };
-
   return (
-    <Router>
+    <Router basename="/marv-wiki">
       <Routes>
         <Route path="/" element={<RootRedirect />} />
         <Route path="/:lang/*" element={<AppLayout allPages={contentFiles} />} />
@@ -281,15 +277,13 @@ function App() {
 
 const AppLayout = ({ allPages }) => {
   const { lang = 'ja' } = useParams();
-  const [pages, setPages] = useState([]);
 
-  useEffect(() => {
-    const pageList = Object.keys(allPages).filter(key => key.includes(`/${lang}/`)).map(path => {
+  const pages = useMemo(() => {
+    return Object.keys(allPages).filter(key => key.includes(`/${lang}/`)).map(path => {
       const id = path.split('/').pop().replace('.md', '');
       const { data } = matter(allPages[path]);
       return { id, title: data.title || id };
     });
-    setPages(pageList);
   }, [lang, allPages]);
 
   return (
