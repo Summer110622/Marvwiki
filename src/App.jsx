@@ -6,11 +6,11 @@ window.global = window;
 window.process = { env: {} };
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { HashRouter as Router, Routes, Route, Link, useParams, Navigate } from 'react-router-dom';
+import { HashRouter as Router, Routes, Route, Link, useParams, Navigate, useNavigate } from 'react-router-dom';
 import { marked } from 'marked';
 import DOMPurify from 'dompurify';
 import matter from 'gray-matter';
-import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon, Flower, Sun, Leaf, Snowflake } from 'lucide-react';
+import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon, Flower, Sun, Leaf, Snowflake, Sparkles, Wand2 } from 'lucide-react';
 import SeasonalEffects from './components/SeasonalEffects';
 
 // Wikipedia Infobox Component
@@ -44,8 +44,116 @@ const Infobox = ({ data }) => {
   );
 };
 
+// Search Component
+const SidebarSearch = ({ allPages, currentLang }) => {
+  const [query, setQuery] = useState('');
+  const [results, setResults] = useState([]);
+  const [isLucky, setIsLucky] = useState(false);
+  const [isDisco, setIsDisco] = useState(false);
+  const [isShake, setIsShake] = useState(false);
+  const [isCreeper, setIsCreeper] = useState(false);
+  const navigate = useNavigate();
+
+  const handleSearch = (e) => {
+    const val = e.target.value;
+    setQuery(val);
+
+    // Playful triggers
+    if (val.toLowerCase() === 'tnt') setIsShake(true);
+    else setIsShake(false);
+
+    if (val.toLowerCase() === 'disco') setIsDisco(true);
+    else setIsDisco(false);
+
+    if (val.toLowerCase() === 'creeper') setIsCreeper(true);
+    else setIsCreeper(false);
+
+    if (val.trim() === '') {
+      setResults([]);
+      return;
+    }
+
+    const filtered = Object.keys(allPages)
+      .filter(path => path.includes(`/${currentLang}/`))
+      .map(path => {
+        const id = path.split('/').pop().replace('.md', '');
+        const { data, content } = matter(allPages[path]);
+        const title = data.title || id;
+        return { id, title, content };
+      })
+      .filter(page =>
+        page.title.toLowerCase().includes(val.toLowerCase()) ||
+        page.content.toLowerCase().includes(val.toLowerCase())
+      )
+      .slice(0, 5);
+
+    setResults(filtered);
+  };
+
+  const handleLucky = () => {
+    const pages = Object.keys(allPages)
+      .filter(path => path.includes(`/${currentLang}/`))
+      .map(path => path.split('/').pop().replace('.md', ''));
+
+    if (pages.length > 0) {
+      const randomPage = pages[Math.floor(Math.random() * pages.length)];
+      navigate(`/${currentLang}/${randomPage}`);
+      setQuery('');
+      setResults([]);
+    }
+  };
+
+  return (
+    <div className={`sidebar-search ${isShake ? 'shake' : ''}`}>
+      <div className="search-input-container">
+        {isCreeper ? (
+          <div className="search-icon" style={{ color: '#00ff00', fontWeight: 'bold' }}>Sss...</div>
+        ) : (
+          <Search className="search-icon" size={16} />
+        )}
+        <input
+          type="text"
+          className={`search-input ${isDisco ? 'disco-text' : ''}`}
+          style={isCreeper ? { border: '2px solid #00ff00' } : {}}
+          placeholder={currentLang === 'ja' ? '検索...' : 'Search...'}
+          value={query}
+          onChange={handleSearch}
+          onBlur={() => setTimeout(() => setResults([]), 200)}
+        />
+      </div>
+
+      {query.trim() !== '' && (
+        <div className="search-results-dropdown">
+          {results.length > 0 ? (
+            results.map(res => (
+              <Link
+                key={res.id}
+                to={`/${currentLang}/${res.id}`}
+                className="search-result-item"
+                onClick={() => { setQuery(''); setResults([]); }}
+              >
+                <strong>{res.title}</strong>
+                <span className="search-result-category">{res.id}</span>
+              </Link>
+            ))
+          ) : (
+            <div className="search-result-item" style={{ color: '#999', fontStyle: 'italic' }}>
+              {currentLang === 'ja' ? '見つかりませんでした...' : 'No results found...'}
+            </div>
+          )}
+        </div>
+      )}
+
+      <button className="lucky-btn" onClick={handleLucky}>
+        <Sparkles size={14} />
+        <span>{currentLang === 'ja' ? 'おまかせ表示' : "I'm Feeling Lucky"}</span>
+      </button>
+    </div>
+  );
+};
+
 // Sidebar Component
-const Sidebar = ({ pages, currentLang, season, setSeason }) => {
+const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
   const seasons = [
     { id: 'spring', icon: Flower, label_ja: '春', label_en: 'Spring' },
     { id: 'summer', icon: Sun, label_ja: '夏', label_en: 'Summer' },
@@ -63,6 +171,8 @@ const Sidebar = ({ pages, currentLang, season, setSeason }) => {
           </div>
         </Link>
       </div>
+
+      <SidebarSearch allPages={allPages} currentLang={currentLang} />
 
       <div className="nav-section">
         <h3 style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -318,7 +428,7 @@ const AppLayout = ({ allPages }) => {
   return (
     <div className="app-container">
       <SeasonalEffects season={season} />
-      <Sidebar pages={pages} currentLang={lang} season={season} setSeason={setSeason} />
+      <Sidebar pages={pages} currentLang={lang} season={season} setSeason={setSeason} allPages={allPages} />
       <Routes>
         <Route path="category/:catName" element={<CategoryPage allPages={allPages} />} />
         <Route path=":id" element={<WikiPage allPages={allPages} />} />

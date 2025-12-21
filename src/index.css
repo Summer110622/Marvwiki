@@ -128,6 +128,159 @@ h2 {
   font-size: 0.85rem;
 }
 
+/* Search Box */
+.sidebar-search {
+  position: relative;
+  margin-bottom: 1.5rem;
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--wiki-secondary-text);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 8px 12px 8px 32px;
+  border: 1px solid var(--wiki-border);
+  border-radius: 4px;
+  font-size: 0.85rem;
+  background: white;
+  transition: all 0.2s ease;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: var(--wiki-link);
+  box-shadow: 0 0 0 2px rgba(51, 102, 204, 0.1);
+}
+
+.search-results-dropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: white;
+  border: 1px solid var(--wiki-border);
+  border-top: none;
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+.search-result-item {
+  display: block;
+  padding: 8px 12px;
+  font-size: 0.85rem;
+  color: var(--wiki-text);
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.search-result-item:last-child {
+  border-bottom: none;
+}
+
+.search-result-item:hover {
+  background: #f0f4ff;
+  text-decoration: none;
+}
+
+.search-result-category {
+  font-size: 0.7rem;
+  color: var(--wiki-secondary-text);
+  display: block;
+}
+
+/* Playful Animations */
+@keyframes shake {
+  0% {
+    transform: translateX(0);
+  }
+
+  25% {
+    transform: translateX(-5px);
+  }
+
+  50% {
+    transform: translateX(5px);
+  }
+
+  75% {
+    transform: translateX(-3px);
+  }
+
+  100% {
+    transform: translateX(0);
+  }
+}
+
+.shake {
+  animation: shake 0.4s ease-in-out;
+}
+
+@keyframes disco {
+  0% {
+    color: #f00;
+  }
+
+  20% {
+    color: #ff0;
+  }
+
+  40% {
+    color: #0f0;
+  }
+
+  60% {
+    color: #0ff;
+  }
+
+  80% {
+    color: #00f;
+  }
+
+  100% {
+    color: #f0f;
+  }
+}
+
+.disco-text {
+  animation: disco 2s linear infinite;
+}
+
+.lucky-btn {
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px;
+  background: #f8f9fa;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  color: #666;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.lucky-btn:hover {
+  background: #e9ecef;
+  border-color: #ccc;
+  color: #333;
+}
+
 /* Content Area */
 .article-header {
   margin-bottom: 1.5rem;
