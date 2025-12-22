@@ -1,7 +1,7 @@
 ---
 title: 生成AIをつかった開発
-categories: [VibeCode]
-image: <img width="1024" height="1024" alt="image" src="https://github.com/user-attachments/assets/6faaa835-4825-4c8a-bc15-3c5d9de5f5ff" />
+categories: [VibeCodeing]
+image: <img width="1024" height="1024" alt="image" src="src/assets/vibecode.png" />
 
 ---
 # 生成AIを活用した開発
