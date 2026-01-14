@@ -10,6 +10,7 @@ MARVについての情報やルール、使用するプラグインの情報、�
 
 ## 外部リンク
 - **Discord**: [公式コミュニティ](https://discord.gg/NfYyMnTfj3)
+- **国街宣伝**: [Wiki版掲示板](#/ja/Promotion) / [Discordチャンネル](https://discord.com/channels/1245921816959127673/1443877434561663058)
 - **公式サイト**: [公式サイト](https://marvgame.com)
 - **EarthMAP**: [EarthMAP](https://earthmap.marvgame.com/)
 

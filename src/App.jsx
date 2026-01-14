@@ -12,6 +12,7 @@ import DOMPurify from 'dompurify';
 import matter from 'gray-matter';
 import { Book, Menu, Search, ChevronRight, ExternalLink, Github, MessageCircle, Shield, Repeat, Landmark, Home as HomeIcon, Flower, Sun, Leaf, Snowflake, Sparkles, Wand2 } from 'lucide-react';
 import SeasonalEffects from './components/SeasonalEffects';
+import PRGenerator from './components/PRGenerator';
 
 // Wikipedia Infobox Component
 const Infobox = ({ data }) => {
@@ -203,6 +204,9 @@ const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
           <li>
             <Link to={`/${currentLang}/Terms-of-Service`}>{currentLang === 'ja' ? '利用規約' : 'Terms of Service'}</Link>
           </li>
+          <li>
+            <Link to={`/${currentLang}/Promotion`}>{currentLang === 'ja' ? '国街宣伝 (Wiki版)' : 'Nation & Town Promotion'}</Link>
+          </li>
         </ul>
       </div>
 
@@ -229,7 +233,8 @@ const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
       <div className="nav-section">
         <h3>{currentLang === 'ja' ? '外部リンク' : 'External Links'}</h3>
         <ul className="nav-links">
-          <li><a href="https://discord.gg/NfYyMnTfj3" target="_blank" rel="noopener noreferrer"><MessageCircle size={14} style={{ marginRight: '5px' }} /> Discord</a></li>
+          <li><a href="https://discord.gg/NfYyMnTfj3" target="_blank" rel="noopener noreferrer"><MessageCircle size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? 'Discord' : 'Discord'}</a></li>
+          <li><a href="https://discord.com/channels/1245921816959127673/1443877434561663058" target="_blank" rel="noopener noreferrer"><MessageCircle size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? '国街宣伝' : 'Nation & Town Promotion'}</a></li>
           <li><a href="https://github.com" target="_blank" rel="noopener noreferrer"><Github size={14} style={{ marginRight: '5px' }} /> GitHub Source</a></li>
         </ul>
       </div>
@@ -352,6 +357,8 @@ const WikiPage = ({ allPages }) => {
           ))}
         </div>
       )}
+
+      {id === 'Promotion' && <PRGenerator lang={lang} />}
     </main>
   );
 };

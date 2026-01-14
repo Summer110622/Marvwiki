@@ -9,6 +9,7 @@ This wiki provides information about the MARV Minecraft server, including rules,
 
 ## External Links
 - **Discord**: [Official Community](https://discord.gg/NfYyMnTfj3)
+- **Promotion**: [Wiki Board](#/en/Promotion) / [Discord Channel](https://discord.com/channels/1245921816959127673/1443877434561663058)
 - **Official Site**: [marvgame.com](https://marvgame.com)
 - **Earth Map**: [Live Map](https://earthmap.marvgame.com/)
 

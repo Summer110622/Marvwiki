@@ -90,3 +90,6 @@ The main system for large-scale land protection and nation management.
 ### Plot Commands
 - `/plot forsale {amount}`: Put a plot of town land up for sale to residents
 - `/plot claim`: Purchase a plot that is for sale for personal use
+
+### Nation & Town Promotion
+If you want to promote your town or nation, use the [Wiki Promotion Board](#/en/Promotion) or the [Nation & Town Promotion](https://discord.com/channels/1245921816959127673/1443877434561663058) channel on Discord.
