@@ -200,9 +200,6 @@ const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
           <li>
             <Link to={`/${currentLang}/Promotion`}>{currentLang === 'ja' ? '国街宣伝 (Wiki版)' : 'Nation & Town Promotion'}</Link>
           </li>
-          <li>
-            <Link to={`/${currentLang}/category/nations`}><Landmark size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? '国' : 'Nations'}</Link>
-          </li>
         </ul>
       </div>
 
@@ -214,6 +211,18 @@ const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
               <Link to={`/${currentLang}/${page.id}`}>{page.title}</Link>
             </li>
           ))}
+        </ul>
+      </div>
+
+      <div className="nav-section">
+        <h3>{currentLang === 'ja' ? '国街' : 'Nations & Towns'}</h3>
+        <ul className="nav-links">
+          <li>
+            <Link to={`/${currentLang}/category/nations`}><Landmark size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? '国家一覧' : 'Nations List'}</Link>
+          </li>
+          <li>
+            <Link to={`/${currentLang}/Promotion`}><Sparkles size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? '掲載申請 / 宣伝' : 'Promotion / PR'}</Link>
+          </li>
         </ul>
       </div>
 
