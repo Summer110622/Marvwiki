@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Copy, Check, Send, Sparkles, Github, MessageCircle } from 'lucide-react';
+import { Copy, Check, Send, Sparkles, Github, MessageCircle, X, Code, Layout, AlertTriangle } from 'lucide-react';
+import Editor from '@monaco-editor/react';
 
 const PRGenerator = ({ lang = 'ja' }) => {
+    const [mode, setMode] = useState('form'); // 'form' or 'editor'
     const [formData, setFormData] = useState({
         type: 'nation',
         name: '',
@@ -13,7 +15,9 @@ const PRGenerator = ({ lang = 'ja' }) => {
         discord: '',
     });
 
+    const [customMarkdown, setCustomMarkdown] = useState('');
     const [copied, setCopied] = useState(false);
+    const [showModal, setShowModal] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -21,38 +25,47 @@ const PRGenerator = ({ lang = 'ja' }) => {
     };
 
     const generateMarkdown = () => {
+        if (mode === 'editor') {
+            return customMarkdown || '### [本文を記載してください]';
+        }
+
         if (formData.type === 'nation') {
-            return `### ${formData.name}
-- **主権者**: ${formData.leader}
-- **首都**: ${formData.capital}
-- **特徴**: ${formData.concept}
-- **詳細**: ${formData.description}
-- **参加方法**: ${formData.discord}`;
+            return `### ${formData.name || '[国家名]'}
+- **主権者**: ${formData.leader || '[プレイヤー名]'}
+- **首都**: ${formData.capital || '[町名]'}
+- **特徴**: ${formData.concept || '[特徴]'}
+- **詳細**: ${formData.description || '[紹介文]'}
+- **参加方法**: ${formData.discord || '[連絡先]'}`;
         } else {
-            return `### ${formData.name}
-- **町長**: ${formData.leader}
+            return `### ${formData.name || '[町名]'}
+- **町長**: ${formData.leader || '[プレイヤー名]'}
 - **所属国家**: ${formData.capital || '無所属'}
-- **座標**: ${formData.coords}
-- **紹介**: ${formData.description}
-- **コンセプト**: ${formData.concept}`;
+- **座標**: ${formData.coords || '[x, z]'}
+- **紹介**: ${formData.description || '[紹介文]'}
+- **コンセプト**: ${formData.concept || '[コンセプト]'}`;
         }
     };
 
     const generateDiscord = () => {
         const emoji = formData.type === 'nation' ? '🌍' : '🏘️';
-        return `${emoji} **【${formData.type === 'nation' ? '国家宣伝' : '町宣伝'}】 ${formData.name}** ${emoji}
+        return `${emoji} **【${formData.type === 'nation' ? '国家宣伝' : '町宣伝'}】 ${formData.name || '[名前]'}** ${emoji}
 ━━━━━━━━━━━━━━━━━━━━━━━━
-👤 **${formData.type === 'nation' ? '主権者' : '町長'}**: ${formData.leader}
-${formData.type === 'nation' ? `🏛️ **首都**: ${formData.capital}` : `📍 **座標**: ${formData.coords}`}
-✨ **コンセプト**: ${formData.concept}
-📝 **紹介**: ${formData.description}
-🔗 **連絡先**: ${formData.discord}
+👤 **${formData.type === 'nation' ? '主権者' : '町長'}**: ${formData.leader || '[代表者]'}
+${formData.type === 'nation' ? `🏛️ **首都**: ${formData.capital || '[首都]'}` : `📍 **座標**: ${formData.coords || '[座標]'}`}
+✨ **コンセプト**: ${formData.concept || '[コンセプト]'}
+📝 **紹介**: ${formData.description || '[紹介文]'}
+🔗 **連絡先**: ${formData.discord || '[連絡先]'}
 ━━━━━━━━━━━━━━━━━━━━━━━━
 #MARV #マインクラフト #建国鯖`;
     };
 
+    const handleSubmitClick = () => {
+        setShowModal(true);
+    };
+
     const submitToGithub = () => {
-        const title = encodeURIComponent(`[宣伝掲載申請] ${formData.name}`);
+        setShowModal(false);
+        const title = encodeURIComponent(`[宣伝掲載申請] ${formData.name || '新規申請'}`);
         const body = encodeURIComponent(`## 宣伝掲載申請 (Wiki Promotion Request)
 
 以下の内容をWikiに掲載してください：
@@ -69,7 +82,6 @@ ${generateMarkdown()}
     };
 
     const submitToDiscord = async () => {
-        // Use environment variable for the webhook URL
         const WEBHOOK_URL = import.meta.env.VITE_DISCORD_WEBHOOK_URL;
 
         if (!WEBHOOK_URL || WEBHOOK_URL.includes('YOUR_WEBHOOK_ID')) {
@@ -77,29 +89,50 @@ ${generateMarkdown()}
             return;
         }
 
+        let displayName = formData.name || (lang === 'ja' ? '名称未設定' : 'unnamed');
+
+        // In editor mode, try to extract the name from the first H3 header
+        if (mode === 'editor') {
+            const match = customMarkdown.match(/^###\s+(.*)/m);
+            if (match && match[1]) {
+                displayName = match[1].trim();
+            }
+        }
+
         const embed = {
-            title: formData.type === 'nation' ? '🌍 新規国家掲載申請' : '🏘️ 新規町掲載申請',
+            title: `${formData.type === 'nation' ? '🌍 国家掲載申請' : '🏘️ 町掲載申請'}: ${displayName}`,
             color: formData.type === 'nation' ? 0x3366cc : 0x2da44e,
-            fields: [
-                { name: '名称', value: formData.name, inline: true },
-                { name: '代表者', value: formData.leader, inline: true },
+            description: mode === 'editor' ? '※エディターモード（カスタムMarkdown）からの申請' : 'フォーム入力からの申請',
+            fields: mode === 'editor' ? [
+                { name: 'プレビュー', value: customMarkdown.substring(0, 500) + (customMarkdown.length > 500 ? '...' : '') || '記述なし' }
+            ] : [
+                { name: '名称', value: formData.name || 'N/A', inline: true },
+                { name: '代表者', value: formData.leader || 'N/A', inline: true },
                 { name: formData.type === 'nation' ? '首都' : '所属国', value: formData.capital || 'N/A', inline: true },
                 { name: '座標/連絡先', value: formData.coords || formData.discord || 'N/A' },
-                { name: 'コンセプト', value: formData.concept },
-                { name: '詳細', value: formData.description }
+                { name: 'コンセプト', value: formData.concept || 'N/A' },
+                { name: '詳細', value: formData.description || 'N/A' }
             ],
             footer: { text: 'Submitted via MarvWiki PR Generator' }
         };
 
+        const markdownContent = generateMarkdown();
+        const blob = new Blob([markdownContent], { type: 'text/markdown' });
+        const file = new File([blob], `${displayName}.md`, { type: 'text/markdown' });
+
+        const formDataToSend = new FormData();
+        formDataToSend.append('payload_json', JSON.stringify({ embeds: [embed] }));
+        formDataToSend.append('file', file);
+
         try {
             const response = await fetch(WEBHOOK_URL, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ embeds: [embed] })
+                body: formDataToSend
             });
 
             if (response.ok) {
                 alert(lang === 'ja' ? 'Discordに送信しました！' : 'Sent to Discord!');
+                setShowModal(false);
             } else {
                 throw new Error('Failed to send');
             }
@@ -113,6 +146,13 @@ ${generateMarkdown()}
         navigator.clipboard.writeText(text);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
+    };
+
+    const switchToEditor = () => {
+        if (!customMarkdown) {
+            setCustomMarkdown(generateMarkdown());
+        }
+        setMode('editor');
     };
 
     const t = {
@@ -132,7 +172,14 @@ ${generateMarkdown()}
             preview: 'プレビュー',
             copyWiki: 'Wiki用コピー',
             copyDiscord: 'Discord用コピー',
-            submitGithub: 'Wikiに掲載申請する (GitHub)',
+            submitGithub: 'Wikiに掲載申請する',
+            modalTitle: '申請方法の選択',
+            modalDesc: 'GitHubアカウントをお持ちですか？',
+            hasAccount: '持っている (GitHubで申請)',
+            noAccount: '持っていない (Discordで直接送る)',
+            githubWarning: '※GitHub版は手動反映のため、対応が遅れる場合があります。',
+            formMode: 'フォーム入力',
+            editorMode: 'エディター (VSCode風)',
             copied: 'コピーしました！'
         },
         en: {
@@ -151,7 +198,14 @@ ${generateMarkdown()}
             preview: 'Preview',
             copyWiki: 'Copy for Wiki',
             copyDiscord: 'Copy for Discord',
-            submitGithub: 'Submit to Wiki (GitHub)',
+            submitGithub: 'Submit to Wiki',
+            modalTitle: 'Choose Submission Method',
+            modalDesc: 'Do you have a GitHub account?',
+            hasAccount: 'Yes (Submit via GitHub)',
+            noAccount: "No (Submit via Discord Webhook)",
+            githubWarning: '*GitHub submissions may take longer to process due to manual review.',
+            formMode: 'Form Mode',
+            editorMode: 'VSCode Mode',
             copied: 'Copied!'
         }
     }[lang];
@@ -159,67 +213,97 @@ ${generateMarkdown()}
     return (
         <div className="pr-generator">
             <div className="generator-header">
-                <h2><Sparkles size={24} style={{ color: '#3366cc', marginRight: '10px' }} />{t.title}</h2>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <h2><Sparkles size={24} style={{ color: '#3366cc', marginRight: '10px' }} />{t.title}</h2>
+                    <div className="mode-selector">
+                        <button className={mode === 'form' ? 'active' : ''} onClick={() => setMode('form')}>
+                            <Layout size={14} /> {t.formMode}
+                        </button>
+                        <button className={mode === 'editor' ? 'active' : ''} onClick={switchToEditor}>
+                            <Code size={14} /> {t.editorMode}
+                        </button>
+                    </div>
+                </div>
                 <p>{t.subtitle}</p>
             </div>
 
             <div className="generator-grid">
-                <div className="generator-form">
-                    <div className="form-group">
-                        <label>{t.type}</label>
-                        <div className="radio-group">
-                            <button
-                                className={formData.type === 'nation' ? 'active' : ''}
-                                onClick={() => setFormData(prev => ({ ...prev, type: 'nation' }))}
-                            >{t.nation}</button>
-                            <button
-                                className={formData.type === 'town' ? 'active' : ''}
-                                onClick={() => setFormData(prev => ({ ...prev, type: 'town' }))}
-                            >{t.town}</button>
+                <div className="generator-main">
+                    {mode === 'form' ? (
+                        <div className="generator-form">
+                            <div className="form-group">
+                                <label>{t.type}</label>
+                                <div className="radio-group">
+                                    <button
+                                        className={formData.type === 'nation' ? 'active' : ''}
+                                        onClick={() => setFormData(prev => ({ ...prev, type: 'nation' }))}
+                                    >{t.nation}</button>
+                                    <button
+                                        className={formData.type === 'town' ? 'active' : ''}
+                                        onClick={() => setFormData(prev => ({ ...prev, type: 'town' }))}
+                                    >{t.town}</button>
+                                </div>
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.name}</label>
+                                <input name="name" value={formData.name} onChange={handleInputChange} placeholder={formData.type === 'nation' ? '例: マルヴ帝国' : '例: スポンジ町'} />
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.leader}</label>
+                                <input name="leader" value={formData.leader} onChange={handleInputChange} placeholder="Minecraft ID" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>{formData.type === 'nation' ? t.capital.split(' / ')[1] : t.capital.split(' / ')[0]}</label>
+                                <input
+                                    name="capital"
+                                    value={formData.capital}
+                                    onChange={handleInputChange}
+                                    placeholder={formData.type === 'nation' ? '例: 本拠地の名前' : '例: 所属している国'}
+                                />
+                            </div>
+
+                            {formData.type === 'town' && (
+                                <div className="form-group">
+                                    <label>{t.coords}</label>
+                                    <input name="coords" value={formData.coords} onChange={handleInputChange} placeholder="例: 1000, -2000" />
+                                </div>
+                            )}
+
+                            <div className="form-group">
+                                <label>{t.concept}</label>
+                                <input name="concept" value={formData.concept} onChange={handleInputChange} placeholder="例: 建築重視 / 初心者歓迎" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.description}</label>
+                                <textarea name="description" value={formData.description} onChange={handleInputChange} rows="4" placeholder="あなたの国や町の魅力を自由に書いてください。" />
+                            </div>
+
+                            <div className="form-group">
+                                <label>{t.discord}</label>
+                                <input name="discord" value={formData.discord} onChange={handleInputChange} placeholder="Discordの招待リンクなど" />
+                            </div>
                         </div>
-                    </div>
-
-                    <div className="form-group">
-                        <label>{t.name}</label>
-                        <input name="name" value={formData.name} onChange={handleInputChange} placeholder={formData.type === 'nation' ? '例: マルヴ帝国' : '例: スポンジ町'} />
-                    </div>
-
-                    <div className="form-group">
-                        <label>{t.leader}</label>
-                        <input name="leader" value={formData.leader} onChange={handleInputChange} placeholder="Minecraft ID" />
-                    </div>
-
-                    <div className="form-group">
-                        <label>{formData.type === 'nation' ? t.capital.split(' / ')[1] : t.capital.split(' / ')[0]}</label>
-                        <input
-                            name="capital"
-                            value={formData.capital}
-                            onChange={handleInputChange}
-                            placeholder={formData.type === 'nation' ? '例: 本拠地の名前' : '例: 所属している国'}
-                        />
-                    </div>
-
-                    {formData.type === 'town' && (
-                        <div className="form-group">
-                            <label>{t.coords}</label>
-                            <input name="coords" value={formData.coords} onChange={handleInputChange} placeholder="例: 1000, -2000" />
+                    ) : (
+                        <div className="generator-editor">
+                            <Editor
+                                height="500px"
+                                defaultLanguage="markdown"
+                                theme="vs-dark"
+                                value={customMarkdown}
+                                onChange={(value) => setCustomMarkdown(value || '')}
+                                options={{
+                                    minimap: { enabled: false },
+                                    fontSize: 14,
+                                    wordWrap: 'on',
+                                    scrollBeyondLastLine: false,
+                                }}
+                            />
                         </div>
                     )}
-
-                    <div className="form-group">
-                        <label>{t.concept}</label>
-                        <input name="concept" value={formData.concept} onChange={handleInputChange} placeholder="例: 建築重視 / 初心者歓迎" />
-                    </div>
-
-                    <div className="form-group">
-                        <label>{t.description}</label>
-                        <textarea name="description" value={formData.description} onChange={handleInputChange} rows="4" placeholder="あなたの国や町の魅力を自由に書いてください。" />
-                    </div>
-
-                    <div className="form-group">
-                        <label>{t.discord}</label>
-                        <input name="discord" value={formData.discord} onChange={handleInputChange} placeholder="Discordの招待リンクなど" />
-                    </div>
                 </div>
 
                 <div className="generator-preview">
@@ -232,29 +316,58 @@ ${generateMarkdown()}
                             <button className="copy-btn" onClick={() => copyToClipboard(generateMarkdown())}>
                                 {copied ? <Check size={14} /> : <Copy size={14} />} {t.copyWiki}
                             </button>
-                            <button className="submit-btn" onClick={submitToGithub}>
-                                <Github size={14} /> {t.submitGithub}
-                            </button>
-                            <button className="discord-submit-btn" onClick={submitToDiscord}>
-                                <MessageCircle size={14} /> {lang === 'ja' ? 'Discordに直接送る' : 'Submit to Discord'}
+                            <button className="submit-btn" onClick={handleSubmitClick}>
+                                <Sparkles size={14} /> {t.submitGithub}
                             </button>
                         </div>
                     </div>
 
-                    <div className="preview-box">
-                        <div className="preview-label">Discord (Formatted)</div>
-                        <pre>{generateDiscord()}</pre>
-                        <button className="copy-btn" onClick={() => copyToClipboard(generateDiscord())}>
-                            {copied ? <Check size={14} /> : <Copy size={14} />} {t.copyDiscord}
-                        </button>
-                    </div>
+                    {mode === 'form' && (
+                        <div className="preview-box">
+                            <div className="preview-label">Discord (Formatted)</div>
+                            <pre>{generateDiscord()}</pre>
+                            <button className="copy-btn" onClick={() => copyToClipboard(generateDiscord())}>
+                                {copied ? <Check size={14} /> : <Copy size={14} />} {t.copyDiscord}
+                            </button>
+                        </div>
+                    )}
 
                     <div className="hint-box">
                         <Send size={16} />
-                        <p>{lang === 'ja' ? '生成した文章をWiki編集者に送るか、Discordの国街宣伝チャンネルに貼り付けてください！' : 'Send the generated text to a Wiki editor or paste it into the Discord channel!'}</p>
+                        <p>{lang === 'ja' ? '生成した文章をWikiに送るか、Discordの国街宣伝チャンネルに貼り付けてください！' : 'Send the generated text to the Wiki or paste it into the Discord channel!'}</p>
                     </div>
                 </div>
             </div>
+
+            {showModal && (
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <button className="modal-close" onClick={() => setShowModal(false)}>
+                            <X size={20} />
+                        </button>
+                        <h3>{t.modalTitle}</h3>
+                        <p>{t.modalDesc}</p>
+                        <div className="modal-buttons">
+                            <button className="modal-btn github" onClick={submitToGithub}>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '5px' }}>
+                                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                                        <Github size={18} />
+                                        {t.hasAccount}
+                                    </div>
+                                    <span className="warning-text" style={{ fontSize: '0.7rem', opacity: 0.8 }}>
+                                        <AlertTriangle size={10} style={{ marginRight: '4px' }} />
+                                        {t.githubWarning}
+                                    </span>
+                                </div>
+                            </button>
+                            <button className="modal-btn discord" onClick={submitToDiscord}>
+                                <MessageCircle size={18} />
+                                {t.noAccount}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

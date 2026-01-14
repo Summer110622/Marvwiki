@@ -200,6 +200,9 @@ const Sidebar = ({ pages, currentLang, season, setSeason, allPages }) => {
           <li>
             <Link to={`/${currentLang}/Promotion`}>{currentLang === 'ja' ? '国街宣伝 (Wiki版)' : 'Nation & Town Promotion'}</Link>
           </li>
+          <li>
+            <Link to={`/${currentLang}/category/nations`}><Landmark size={14} style={{ marginRight: '5px' }} /> {currentLang === 'ja' ? '国' : 'Nations'}</Link>
+          </li>
         </ul>
       </div>
 
@@ -371,12 +374,19 @@ const CategoryPage = ({ allPages }) => {
     });
   }, [catName, allPages, lang]);
 
+  const categoryDisplayNames = {
+    nations: { ja: '国家', en: 'Nations' },
+    community: { ja: 'コミュニティ', en: 'Community' },
+  };
+
+  const displayName = categoryDisplayNames[catName]?.[lang] || catName;
+
   return (
     <main className="main-content">
       <div className="article-header">
-        <h1>Category: {catName}</h1>
+        <h1>{lang === 'ja' ? `カテゴリ: ${displayName}` : `Category: ${displayName}`}</h1>
         <div style={{ fontSize: '0.8rem', color: '#54595d', borderBottom: '1px solid #a2a9b1', paddingBottom: '2px', marginBottom: '1rem' }}>
-          Articles in this category
+          {lang === 'ja' ? 'このカテゴリの記事' : 'Articles in this category'}
         </div>
       </div>
 
