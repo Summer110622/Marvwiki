@@ -34,6 +34,7 @@ JAVA版・統合版の両方で参加できます。
 
   <h3>Java版 / 統合版 共通</h3>
   <div class="server-address">marvgame.net</div>
+  <p>thirdparty ip</p>
   <div class="server-address">bedwars.love</div>
 
   <p style="margin-top: 1rem;"><strong>統合版ポート:</strong> 19132</p>
