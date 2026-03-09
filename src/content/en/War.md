@@ -3,12 +3,29 @@ title: War System
 categories: [guide, towny]
 ---
 
-# War System (COMING SOON)
+# Strategic Operations Briefing
 
-The War System for the MARV server is currently under development.
+> **TOP SECRET / EYES ONLY**
+>
+> SUBJECT: MARV TERRITORIAL DISPUTE PROTOCOLS (WAR SYSTEM)
 
-Detailed guides regarding territorial disputes and large-scale combat between nations will be published soon.
-Stay tuned and prepare for battle!
+## I. Tactical Overview
+The High Command is currently drafting the official engagement rules for international conflicts. These protocols will govern:
+- **Territorial Conquest**: Procedures for claiming and defending frontier lands.
+- **Logistical Support**: Supply line management between allied towns.
+- **Rules of Engagement**: Formal declaration of war and armistice conditions.
+
+## II. Active Frontlines (COMING SOON)
+| Sector | Combatants | Status |
+| :--- | :--- | :--- |
+| Northern Tundra | *Classified* | **STANDBY** |
+| Eastern Isles | *Classified* | **STANDBY** |
+
+## III. Strategic Objectives
+Stay tuned for the publication of the "Manual of Arms: Inter-Nation Combat Edition". Prepare your stockpiles and fortify your borders. The era of total war approaches.
+
+---
+**OPERATIONAL READINESS: 15%**
 
 ---
 [Back to Nations](#/en/Nation)

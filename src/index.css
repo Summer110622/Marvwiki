@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@700&family=Roboto+Condensed:wght@400;700&family=Courier+Prime:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@700&family=Roboto+Condensed:wght@400;700&family=Courier+Prime:wght@400;700&family=Stardos+Stencil:wght@400;700&display=swap');
 
 :root {
   /* HOI4 Metallic/Military Palette */
@@ -11,10 +11,8 @@
   --hoi4-text-muted: #888888;
 
   /* Paper/Dossier aesthetic */
-  --wiki-bg: #e8e2d4;
-  /* Aged paper */
-  --wiki-sidebar-bg: #1e1e1e;
-  /* Dark command panel */
+  --wiki-bg: #e8e2d4; /* Aged paper */
+  --wiki-sidebar-bg: #1e1e1e; /* Dark command panel */
   --wiki-border: #2a2a2a;
   --wiki-link: #3d5a80;
   --wiki-link-hover: #293241;
@@ -67,13 +65,8 @@ a:hover {
   text-decoration: underline;
 }
 
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-  font-family: 'Roboto Condensed', sans-serif;
+/* Headings */
+h1, h2, h3, h4, h5, h6 {
   color: var(--wiki-heading);
   margin-top: 1.5rem;
   margin-bottom: 0.5rem;
@@ -81,6 +74,9 @@ h6 {
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
+
+h1, h2 { font-family: 'Stardos Stencil', cursive; }
+h3, h4, h5, h6 { font-family: 'Roboto Condensed', sans-serif; }
 
 h1 {
   font-size: 2rem;
@@ -102,15 +98,15 @@ h2 {
 
 .sidebar {
   width: var(--sidebar-width);
-  background: var(--wiki-sidebar-bg);
+  background: linear-gradient(135deg, #1e1e1e 0%, #252525 50%, #1a1a1a 100%);
   padding: 24px;
-  border-right: 4px solid var(--hoi4-panel-border);
+  border-right: 6px double var(--hoi4-panel-border);
   position: sticky;
   top: 0;
   height: 100vh;
   overflow-y: auto;
   flex-shrink: 0;
-  box-shadow: inset -5px 0 15px rgba(0, 0, 0, 0.5), 5px 0 20px rgba(0, 0, 0, 0.3);
+  box-shadow: inset -10px 0 25px rgba(0, 0, 0, 0.7), 5px 0 30px rgba(0, 0, 0, 0.5);
   color: var(--hoi4-text-gold);
 }
 
@@ -126,7 +122,7 @@ h2 {
   box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.05);
 }
 
-/* Paper Texture */
+/* Paper Texture & Tactical Overlay */
 .main-content::before {
   content: "";
   position: absolute;
@@ -134,31 +130,15 @@ h2 {
   left: 0;
   right: 0;
   bottom: 0;
-  background: url('https://www.transparenttextures.com/patterns/handmade-paper.png');
-  opacity: 0.3;
+  background:
+    url('https://www.transparenttextures.com/patterns/handmade-paper.png'),
+    repeating-linear-gradient(0deg, transparent, transparent 40px, rgba(0,0,0,0.02) 40px, rgba(0,0,0,0.02) 41px),
+    repeating-linear-gradient(90deg, transparent, transparent 40px, rgba(0,0,0,0.02) 40px, rgba(0,0,0,0.02) 41px);
+  opacity: 0.4;
   pointer-events: none;
 }
 
-/* Wikipedia aesthetic elements */
-.wiki-logo {
-  font-family: 'Libre Baskerville', serif;
-  font-size: 1.2rem;
-  margin-bottom: 2rem;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-}
-
-.wiki-logo img {
-  width: 100px;
-  height: auto;
-}
-
-.nav-section {
-  margin-bottom: 1.5rem;
-}
-
+/* Sidebar Elements */
 .wiki-logo {
   font-family: 'Roboto Condensed', serif;
   font-size: 1.4rem;
@@ -247,8 +227,7 @@ h2 {
   border-radius: 2px;
   font-size: 0.9rem;
   background: #1a1a1a;
-  color: #00ff00;
-  /* Radar/Terminal green */
+  color: #00ff00; /* Radar/Terminal green */
   font-family: 'Courier Prime', monospace;
   transition: all 0.2s ease;
   box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5);
@@ -294,73 +273,33 @@ h2 {
   border-bottom: none;
 }
 
-.search-result-item:hover {
-  background: #f0f4ff;
-  text-decoration: none;
-}
-
 .search-result-category {
   font-size: 0.7rem;
   color: var(--wiki-secondary-text);
   display: block;
 }
 
-/* Playful Animations */
+/* Animations */
 @keyframes shake {
-  0% {
-    transform: translateX(0);
-  }
-
-  25% {
-    transform: translateX(-5px);
-  }
-
-  50% {
-    transform: translateX(5px);
-  }
-
-  75% {
-    transform: translateX(-3px);
-  }
-
-  100% {
-    transform: translateX(0);
-  }
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  50% { transform: translateX(5px); }
+  75% { transform: translateX(-3px); }
+  100% { transform: translateX(0); }
 }
 
-.shake {
-  animation: shake 0.4s ease-in-out;
-}
+.shake { animation: shake 0.4s ease-in-out; }
 
 @keyframes disco {
-  0% {
-    color: #f00;
-  }
-
-  20% {
-    color: #ff0;
-  }
-
-  40% {
-    color: #0f0;
-  }
-
-  60% {
-    color: #0ff;
-  }
-
-  80% {
-    color: #00f;
-  }
-
-  100% {
-    color: #f0f;
-  }
+  0% { color: #f00; }
+  20% { color: #ff0; }
+  40% { color: #0f0; }
+  60% { color: #0ff; }
+  80% { color: #00f; }
+  100% { color: #f0f; }
 }
 
-.disco-text {
-  animation: disco 2s linear infinite;
-}
+.disco-text { animation: disco 2s linear infinite; }
 
 .lucky-btn {
   width: 100%;
@@ -371,6 +310,7 @@ h2 {
   border-radius: 2px;
   font-size: 0.8rem;
   color: var(--hoi4-text-gold);
+  font-family: 'Stardos Stencil', cursive;
   cursor: pointer;
   transition: all 0.2s;
   display: flex;
@@ -447,34 +387,6 @@ h2 {
   height: auto;
 }
 
-.article-body img {
-  max-width: 100%;
-  height: auto;
-  margin: 1rem 0;
-  border-radius: 4px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  display: block;
-}
-
-/* Red Stamp Style for "Soon" badges */
-.badge-soon {
-  display: inline-block;
-  color: #b22222;
-  /* Ink Red */
-  border: 2px solid #b22222;
-  padding: 1px 6px;
-  font-size: 0.65rem;
-  font-weight: 900;
-  text-transform: uppercase;
-  border-radius: 4px;
-  transform: rotate(-10deg);
-  box-shadow: 1px 1px 0 rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.1);
-  letter-spacing: 1px;
-  margin-left: 8px;
-  font-family: 'Courier New', Courier, monospace;
-}
-
 .infobox-row {
   display: flex;
   border-bottom: 1px solid #eaecf0;
@@ -489,6 +401,36 @@ h2 {
 
 .infobox-data {
   width: 60%;
+}
+
+.article-body img {
+  max-width: 100%;
+  height: auto;
+  margin: 1rem 0;
+  border-radius: 4px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  display: block;
+}
+
+/* Red Stamp Style for "Soon" badges */
+.badge-soon {
+  display: inline-block;
+  color: #b22222; /* Ink Red */
+  border: 3px double #b22222;
+  padding: 2px 8px;
+  font-size: 0.7rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transform: rotate(-12deg);
+  box-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  background: rgba(178, 34, 34, 0.05);
+  letter-spacing: 2px;
+  margin-left: 8px;
+  font-family: 'Courier New', Courier, monospace;
+  opacity: 0.8;
+  filter: blur(0.3px);
 }
 
 /* TOC */
@@ -508,25 +450,13 @@ h2 {
   margin-bottom: 10px;
 }
 
-.toc-links {
-  list-style: none;
-}
-
-.toc-item {
-  margin-bottom: 4px;
-}
-
-.toc-number {
-  color: #555;
-  margin-right: 5px;
-}
+.toc-links { list-style: none; }
+.toc-item { margin-bottom: 4px; }
+.toc-number { color: #555; margin-right: 5px; }
 
 /* Responsive */
 @media (max-width: 768px) {
-  .app-container {
-    flex-direction: column;
-  }
-
+  .app-container { flex-direction: column; }
   .sidebar {
     width: 100%;
     height: auto;
@@ -534,17 +464,8 @@ h2 {
     border-right: none;
     border-bottom: 1px solid var(--wiki-border);
   }
-
-  .main-content {
-    padding: 20px;
-    border-left: none;
-  }
-
-  .infobox {
-    float: none;
-    width: 100%;
-    margin-left: 0;
-  }
+  .main-content { padding: 20px; border-left: none; }
+  .infobox { float: none; width: 100%; margin-left: 0; }
 }
 
 /* Join Card */
@@ -639,18 +560,13 @@ h2 {
   font-weight: 600;
 }
 
-.generator-main {
-  min-width: 0;
-  /* Prevents flex/grid blowouts */
-}
-
+.generator-main { min-width: 0; }
 .generator-editor {
   border: 1px solid var(--wiki-border);
   border-radius: 8px;
   overflow: hidden;
   background: #1e1e1e;
 }
-
 
 .generator-form {
   display: flex;
@@ -822,9 +738,7 @@ h2 {
 }
 
 @media (max-width: 900px) {
-  .generator-grid {
-    grid-template-columns: 1fr;
-  }
+  .generator-grid { grid-template-columns: 1fr; }
 }
 
 /* Modal Styles */
@@ -865,9 +779,7 @@ h2 {
   transition: color 0.2s;
 }
 
-.modal-close:hover {
-  color: var(--wiki-text);
-}
+.modal-close:hover { color: var(--wiki-text); }
 
 .modal-content h3 {
   margin-top: 0;
